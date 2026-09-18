@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Guided — DAP Training & Guidance",
+  "version": "1.0.0",
+  "description": "Resilient in-app guidance, workflow recording, validation, and portable training.",
+  "permissions": ["activeTab", "scripting", "storage", "tabs", "downloads"],
+  "host_permissions": ["<all_urls>"],
+  "action": {"default_popup": "popup/popup.html", "default_icon": {"16": "assets/icon16.svg", "48": "assets/icon48.svg", "128": "assets/icon128.svg"}},
+  "background": {"service_worker": "background/service-worker.js"},
+  "content_scripts": [{"matches": ["<all_urls>"], "js": ["content/resolver.js", "content/validator.js", "content/injector.js", "content/overlay.js", "content/recorder.js", "content/player.js", "content/content-entry.js"], "run_at": "document_idle"}],
+  "web_accessible_resources": [{"resources": ["assets/*", "styles/shadow-ui.css"], "matches": ["<all_urls>"]}]
+}

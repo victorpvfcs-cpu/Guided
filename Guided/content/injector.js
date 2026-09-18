@@ -1,0 +1,2 @@
+class DAPInjector { static resolveValue(v, vars={}) { return typeof v==='string'?v.replace(/\$\{(.*?)\}/g,(_,k)=>vars[k.trim()] ?? _):v; } static applyInput(el,v) { const setter=Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el),'value')?.set; (setter||((x,y)=>x.value=y))(el,v); ['input','change','blur'].forEach(t=>el.dispatchEvent(new Event(t,{bubbles:true}))); } }
+window.DAPInjector=DAPInjector;

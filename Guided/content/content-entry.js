@@ -1,0 +1,4 @@
+let dapRecorder, dapPlayer;
+function handleCommand(message) { if (!message) return; if(message.type==='DAP_START_RECORDING'){dapRecorder=new DAPRecorder();dapRecorder.start();chrome.runtime.sendMessage({type:'RECORDING_STATUS',active:true});} if(message.type==='DAP_STOP_RECORDING'){const workflow={workflowId:crypto.randomUUID(),workflowName:'New workflow',targetUrlPattern:location.origin+'/*',steps:dapRecorder?.stop()||[]};chrome.runtime.sendMessage({type:'RECORDING_STATUS',active:false});chrome.runtime.sendMessage({type:'RECORDING_COMPLETE',workflow});window.postMessage({type:'DAP_RECORDING_COMPLETE',workflow},'*');} if(message.type==='DAP_START_PLAYER'&&message.workflow){dapPlayer=new DAPPlayer(message.workflow);dapPlayer.start();} }
+window.addEventListener('message', e => { if(e.source===window) handleCommand(e.data); });
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => { handleCommand(message); sendResponse({ ok: true }); });

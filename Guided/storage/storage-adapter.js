@@ -1,0 +1,3 @@
+/** Browser-safe storage contract. Never put cloud secret keys in the extension. */
+export class StorageAdapter { constructor(config){this.config=config;} async load(){throw new Error('Implement load()');} async save(){throw new Error('Implement save()');} }
+export class PresignedUrlAdapter extends StorageAdapter { async load(){const r=await fetch(this.config.downloadUrl);if(!r.ok)throw new Error(`Download failed: ${r.status}`);return r.json();} async save(workflow){const r=await fetch(this.config.uploadUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(workflow)});if(!r.ok)throw new Error(`Upload failed: ${r.status}`);return true;} }
