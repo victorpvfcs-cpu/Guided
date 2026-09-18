@@ -11,6 +11,7 @@ class FakeElement {
   getBoundingClientRect() { return { width: this.style.display === 'none' ? 0 : 100, height: this.style.visibility === 'hidden' ? 0 : 24 }; }
   closest(selector) { return null; }
   querySelector() { return null; }
+  dispatchEvent() { return true; }
 }
 
 class FakeDocument {
@@ -60,6 +61,15 @@ for (const persona of personas) {
   globalThis.document = new FakeDocument([input, label]);
   const found = DAPResolver.resolve({ labelText: `Legacy label ${persona.id}`, cssFallback: 'input' });
   if (found !== input) { failed++; failures.push(`${persona.id}/associated-label/${persona.system}`); } else passed++;
+}
+
+class NativeSetterInput extends FakeElement { constructor() { super('input', { type: 'text' }); this.events = 0; } dispatchEvent() { this.events += 1; return true; } }
+Object.defineProperty(NativeSetterInput.prototype, 'value', { set(value) { this._nativeValue = value; }, get() { return this._nativeValue || ''; } });
+for (const kind of ['native-setter', 'select', 'checkbox', 'contenteditable']) {
+  const attrs = kind === 'select' ? {} : kind === 'checkbox' ? { type: 'checkbox' } : {};
+  const element = kind === 'native-setter' ? new NativeSetterInput() : new FakeElement(kind === 'contenteditable' ? 'div' : kind === 'checkbox' ? 'input' : kind, attrs);
+  if (kind === 'contenteditable') element.isContentEditable = true;
+  try { DAPInjector.applyInput(element, kind === 'checkbox' ? 'true' : 'new value'); if (kind === 'native-setter' && element.value !== 'new value') throw new Error('native setter did not receive value'); passed++; } catch (error) { failed++; failures.push(`injector/${kind}/${error.message}`); }
 }
 
 // Workflow save/load round trips: serialize, write, read, and compare all 50 documents.

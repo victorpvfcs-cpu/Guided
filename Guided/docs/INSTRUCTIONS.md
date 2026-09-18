@@ -2,10 +2,10 @@
 
 1. Open Chrome and visit `chrome://extensions`.
 2. Enable Developer mode, choose **Load unpacked**, and select this folder.
-3. Open a target site and click the Guided extension icon.
-4. Start recording, perform the learner actions, then stop recording. Guided now saves the workflow to extension storage and performs a read-after-write verification.
+3. Open a target site. The persistent Guided bar appears on the right automatically; it is also available from the extension popup.
+4. Use the **Record** tab for the complete control set: start/stop recording, play saved workflow, export/import, workflow editing, and storage settings. Form-control clicks are not recorded as separate steps.
 5. Reopen the popup to edit the workflow name, description, or JSON, then choose **Save edits**. Use **Export saved workflow** for a portable file.
-6. Import a JSON workflow from disk or load one from an HTTPS URL, then choose **Play saved workflow**. The player highlights each target and shows step progress.
+6. Import a JSON workflow from disk or load one from an HTTPS URL, then choose **Play saved workflow** in the Record tab or **Playback** tab. Dropdown steps say only to select an option and do not prescribe the option. Calendar/date steps accept any selected date and watch for picker updates even when the calendar does not emit a normal change event. Input steps automatically advance after the value is committed or the user pauses typing; the next field is focused and ready. Enter and Continue remain available as fallbacks.
 
 ## Connecting storage
 

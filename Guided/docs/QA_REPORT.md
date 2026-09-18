@@ -9,7 +9,7 @@ Date: 2026-09-17
 - Ran `deno check` on every JavaScript file; no syntax/type-check errors were reported.
 - Performed a line-by-line review of all 124 original lines, then re-reviewed the repaired files.
 - Traced recording, popup, background persistence, import, remote load, resolver, validator, injector, overlay, and player flows.
-- Ran `qa/uat_virtual_users.js`: 50 distinct virtual personas, 14 journeys each, plus 50 saved-document round trips: 750 checks, 750 passed, 0 failed.
+- Ran `qa/uat_virtual_users.js`: 50 distinct virtual personas, 14 journeys each, plus 50 saved-document round trips and 4 injector checks: 754 checks, 754 passed, 0 failed.
 
 ## Edge-case matrix
 
@@ -95,6 +95,17 @@ Date: 2026-09-17
 - Fixed popup-to-content messaging so recording and playback commands actually reach the content script.
 - Added persistent recording-state recovery when the popup is reopened.
 - Added target highlighting, step progress, and optional `autoPilot` injection during playback.
+- Fixed the playback `Illegal invocation` error by calling native setters with `setter.call(element, value)` and added support for select, checkbox/radio, and contenteditable targets.
+- Replaced the bottom-right transient guide card with a persistent full-height in-page sidebar.
+- Added player-level injection error recovery so a failed fill can be retried without losing the workflow.
+- Made the sidebar appear immediately on page load with Record and Play choices, and kept those choices available after completion.
+- Changed input recording to ignore the initial click on form controls and to advance on Enter after a value is entered.
+- Moved the popup feature set into the permanent sidebar's Record tab and added a dedicated Playback tab for active playback.
+- Removed the required input/Enter command from input-step guidance; input steps now auto-advance after change or a short typing pause and focus the next field, with Continue/Enter retained only as fallbacks.
+- Added dedicated `select` steps that request an option without recording or displaying a prescribed value, allowed any non-empty calendar date, and skipped legacy click-before-input steps to prevent double advancement.
+- Added event and value-change watching for native and custom dropdown/calendar widgets so playback advances as soon as a real selection is present.
+- Made calendar fingerprints and injected data date-agnostic, including compatibility with older workflows that recorded an exact date or enabled auto-fill.
+- Added calendar-surface detection for custom date pickers and moved the spotlight to the month/grid surface; legacy recorded date state is cleared before date selection.
 - Expanded fingerprints and resolution for legacy tags, role/ARIA combinations, titles, alt text, values, visible text, labels, and all three common test attributes.
 
 ## Remaining release blockers
@@ -102,6 +113,6 @@ Date: 2026-09-17
 - A live Chrome install test should be run on a normal HTTPS page, a SPA, a page with a CSP, and a restricted page.
 - The extension still needs a production workflow editor; recording currently persists the generated workflow but does not expose editing or naming controls.
 - The storage gateway, authentication, tenant isolation, CORS policy, and presigned URL implementation are examples only.
-- The player does not yet implement spotlight geometry, hover/select actions, SmartTips, video embeds, or autoPilot behavior from the original blueprint.
+- The player still does not implement hover/select actions, SmartTips, or video embeds from the original blueprint.
 - SVG icons may need conversion to PNG for the target Chrome publishing pipeline if Chrome Web Store validation rejects them.
 - Automated browser tests and a dependency-based JSON Schema validator should be added before production release.
